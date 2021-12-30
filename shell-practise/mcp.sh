@@ -1,33 +1,32 @@
-#! /bin/bash
+#! /bin/sh
 
 # 获取所有参数
 
 source=$1;
 target=$2;
-
+sourceLen=${#1}
 
 copyDir() {
-  for f in $(ls $source)
+  for f in $(ls $1)
     do
-        echo "${source}/${f}"
-        if [ -d "${source}/${f}" ] 
+        # 如果是目录 递归目录
+        if [ -d "${1}/${f}" ] 
         then
-            echo "${source}"
-            let "source=${source}/${f}"
-            copyDir
-        # else
-            # echo "copy $source/${f} to ${target}"
-            # cp "$source/${f}" "$target"
+            mkdir -p ${target}${1:sourceLen}/${f}
+            copyDir ${1}/${f}
+        else
+            echo "copy $1/${f} to ${target}${1:sourceLen}"
+            cp "$1/${f}" "$target${1:sourceLen}"
         fi
     done
 }
 
 if [ ! -d $source ]
 then
-    echo '$source 不是文件夹'
+    echo "$source 不是文件夹"
 elif [ ! -d $target ]
 then 
     echo "$target 不是文件夹"
 else
-    copyDir
+    copyDir $source
 fi
